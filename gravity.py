@@ -40,9 +40,10 @@ class Mass():
         self.color = color
         self.accel = np.float64([0,0])
         self.vel = np.float64([0,0])
-        self.line = []
+        self.line =[] 
+        #self.line[0] = self.posCentre
         #self.line.append(self.posCentre)
-        self.line.append((self.posCentre[0], self.posCentre[1]))
+        self.line.append([self.posCentre[0], self.posCentre[1]])
 
     def update(self, gamedisplay):
         #print("self.accel")
@@ -51,13 +52,12 @@ class Mass():
         #print(self.vel)
         self.vel += self.accel
         self.posCentre += self.vel
-        self.line.append((self.posCentre[0], self.posCentre[1]))
+        self.line.append([self.posCentre[0], self.posCentre[1]])
         a = self.posCentre 
         #print(a)
         #print(self.vel)
         pygame.draw.circle(gameDisplay, self.color, a.astype(int) , self.size)
-        print(self.line)
-        pygame.draw.lines(gameDisplay, self.color, True, self.line, 1 )
+        pygame.draw.lines(gameDisplay, self.color, False, self.line, 1 )
         self.accel = np.float64([0,0])
 
 def connect(XY1, XY2, w ):
@@ -101,34 +101,24 @@ def connect(XY1, XY2, w ):
 #
 def gravityUpdate(obj1, obj2):
     relative_size = obj1.size/ obj2.size
-    distX = obj1.posCentre[0] - obj2.posCentre[0] 
-    distY = obj1.posCentre[1] - obj2.posCentre[1] 
+
+    distX = obj2.posCentre[0] - obj1.posCentre[0] 
+    distY = obj2.posCentre[1] - obj1.posCentre[1] 
+
     dist = math.sqrt( math.pow(distX, 2) +  math.pow(distY, 2) )
 
     a =  (obj2.size * G_constant ) /( dist**2)
-    print(a)
-    print(obj1)
-    print( (distX/ dist)* a )
-    print( (distX/ dist)* a *(-1))
 
-    obj1.accel[0] = (distX/ dist)* a *(-1)
-    obj1.accel[1] = (distY/ dist)* a*(-1)
-    print("obj1.accel")
-    print(obj1.accel)
+    obj1.accel[0] += (distX/ dist)* a
+    obj1.accel[1] += (distY/ dist)* a
 
     b =  (obj1.size * G_constant ) /( dist**2)
+    distX = obj1.posCentre[0] - obj2.posCentre[0] 
+    distY = obj1.posCentre[1] - obj2.posCentre[1] 
 
-    #obj2.accel[0] -= (distX/ dist)* b 
-    #obj2.accel[1] -= (distY/ dist)* b 
+    obj2.accel[0] += (distX/ dist)* b 
+    obj2.accel[1] += (distY/ dist)* b 
 
-    obj2.accel[0] = (distX/ dist)* b 
-    obj2.accel[1] = (distY/ dist)* b 
-    print("obj1.accel")
-    print(obj1.accel)
-
-
-    print("obj2.accel")
-    print(obj2.accel)
 
 def gameLoop():
     gameDisplay.fill(gray)
@@ -138,8 +128,8 @@ def gameLoop():
     masses.append(ball)
     sun = Mass(gameDisplay, [320,90], 90 , red) 
     masses.append(sun)
-    #moon = Mass(gameDisplay, [90,320], 30 , black) 
-    #masses.append(moon)
+    moon = Mass(gameDisplay, [90,320], 30 , black) 
+    masses.append(moon)
 
 
     while not gameExit:
@@ -158,9 +148,10 @@ def gameLoop():
 
         for a in masses:
             a.update(gameDisplay)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    gameExit = True
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                gameExit = True
 
         clock.tick(FPS)
         key = pygame.key.get_pressed()
