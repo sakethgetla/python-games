@@ -114,14 +114,12 @@ def connect(XY1, XY2, w ):
 #
 
 
-def btn(gameDisplay, pos, size, color, txt, action):
-    mouse = pygame.mouse.get_pos()
-    click = pygame.mouse.get_pressed()
+def btn(gameDisplay, pos, size, color, txt, action, mouse, click):
     #click = pygame.mouse.get_rel()
     #print(click)
 
-    if (mouse[0] > pos[0] and mouse[0] < pos[0]+size[0]):
-        if (mouse[1] > pos[1] and mouse[1] < pos[1]+size[1]):
+    if ( pos[0] < mouse[0] < pos[0]+size[0]):
+        if ( pos[1] < mouse[1] < pos[1]+size[1]):
             if (click[0] == 1):
                 print("Awdaw")
                 action()
@@ -187,11 +185,13 @@ def gameLoop():
         #masses[0].update(gameDisplay)
         #masses[1].update(gameDisplay)
         #masses[2].update(gameDisplay)
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
 
         pygame.display.update()
         gameDisplay.fill(gray)
-        btn(gameDisplay, startBtnPos, btnSize, green, "start", startClicked) 
-        btn(gameDisplay, resetBtnPos, btnSize, green, "reset", resetClicked) 
+        btn(gameDisplay, startBtnPos, btnSize, green, "start", startClicked, mouse, click) 
+        btn(gameDisplay, resetBtnPos, btnSize, green, "reset", resetClicked, mouse, click) 
 
 
         if (gravityON):
