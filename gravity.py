@@ -11,9 +11,10 @@ blue = (0, 0, 255)
 green = (0, 255, 0)
 lightGreen = (155, 255, 0)
 yellow = (255, 255, 0)
+white = (255, 255, 255)
 
-display_width = 800
-display_height = 600
+display_width = 1300
+display_height = 900
 
 width = 10
 height = width
@@ -29,6 +30,7 @@ btnSize = [50 , 20]
 startBtnPos = [display_width - btnSize[0] - 10, 10]
 resetBtnPos = [ 10, 10]
 gravityON = False
+line2vel_ratio = 0.1
 
 class Mass():
     posCentre = np.float64([0,0])
@@ -70,6 +72,8 @@ class Mass():
         #print(self.vel)
         self.vel += self.accel
         self.posCentre += self.vel
+        a = self.posCentre.copy()
+        self.dotPos = a.astype(int)
         self.line.append([self.posCentre[0], self.posCentre[1]])
         #print(a)
         #print(self.vel)
@@ -95,11 +99,12 @@ class Mass():
                 if (click[1] == 1):
                     self.posCentre = mouse
 
-
         if self.clicked:
             pygame.draw.circle(gameDisplay, red, self.dotPos, 4)
         else :
             pygame.draw.circle(gameDisplay, black, self.dotPos, 4)
+
+        pygame.draw.line(gameDisplay, white, self.dotPos, self.posCentre, 1)
 
 
 def connect(XY1, XY2, w ):
@@ -150,7 +155,6 @@ def btn(gameDisplay, pos, size, color, txt, action, mouse, click):
     if ( pos[0] < mouse[0] < pos[0]+size[0]):
         if ( pos[1] < mouse[1] < pos[1]+size[1]):
             if (click[0] == 1):
-                print("Awdaw")
                 action()
 
     pygame.draw.rect(gameDisplay, color, [pos[0], pos[1], size[0], size[1]] )
@@ -188,11 +192,14 @@ def resetClicked():
         a.update(gameDisplay)
 
 def startClicked():
+    print("Awdaw")
     global gravityON
     if (gravityON):
         gravityON = False
     else:
         gravityON = True
+        for a in masses:
+            a.vel = (a.posCentre - a.dotPos) * line2vel_ratio
 
 def gameLoop():
     mouse = pygame.mouse.get_pos()
@@ -201,10 +208,10 @@ def gameLoop():
     gameExit = False
     global gravityON
 
-    ball = Mass(gameDisplay, [420,420], 50 , green) 
-    masses.append(ball)
     sun = Mass(gameDisplay, [320,90], 90 , yellow) 
     masses.append(sun)
+    ball = Mass(gameDisplay, [420,420], 50 , green) 
+    masses.append(ball)
     moon = Mass(gameDisplay, [90,320], 20 , lightGreen) 
     masses.append(moon)
 
