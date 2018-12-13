@@ -75,35 +75,31 @@ class Mass():
         #print(self.vel)
         self.accel = np.float64([0,0])
 
-    def ifclicked(self, mouse, click):
+
+    def draw(self, gameDisplay, mouse, click):
         self.clicked = False
-
-
-    def draw(self, gameDisplay):
         a = self.posCentre.copy()
         pygame.draw.circle(gameDisplay, self.color, a.astype(int) , self.size)
         pygame.draw.lines(gameDisplay, blue, False, self.line, 1 )
 
-        if self.clicked:
-            mouse = pygame.mouse.get_pos()
-            pygame.draw.circle(gameDisplay, red, mouse, 4)
-        else :
-            pygame.draw.circle(gameDisplay, black, a.astype(int) , 4)
 
         if not gravityON:
-            if ( self.dotPos[0]-15 < mouse[0] < self.dotPos[0] + 15):
-                if ( self.dotPos[1]-15 < mouse[1] < self.dotPos[1] + 15):
-                    if (click[0] == 1):
-                        self.clicked = True
-                        self.dotPos = mouse
-                        pygame.draw.circle(gameDisplay, red, mouse, 4)
-                    if (click[1] == 1):
-                        self.posCentre = mouse
-            elif ( self.PosCentre[0]-15 < mouse[0] < self.PosCentre[0] + 15):
-                if ( self.PosCentre[1]-15 < mouse[1] < self.PosCentre[1] + 15):
+            if ( self.dotPos[0]-15 < mouse[0] < self.dotPos[0] + 15) and ( self.dotPos[1]-15 < mouse[1] < self.dotPos[1] + 15):
+                if (click[0] == 1):
+                    self.clicked = True
+                   # mouse = pygame.mouse.get_pos()
+                   # click = pygame.mouse.get_pressed()
+                    self.dotPos = mouse
 
-            else:
-                pygame.draw.circle(gameDisplay, black, a.astype(int) , 4)
+            if ( self.posCentre[0]-15 < mouse[0] < self.posCentre[0] + 15) and ( self.posCentre[1]-15 < mouse[1] < self.posCentre[1] + 15):
+                if (click[1] == 1):
+                    self.posCentre = mouse
+
+
+        if self.clicked:
+            pygame.draw.circle(gameDisplay, red, self.dotPos, 4)
+        else :
+            pygame.draw.circle(gameDisplay, black, self.dotPos, 4)
 
 
 def connect(XY1, XY2, w ):
@@ -242,8 +238,7 @@ def gameLoop():
                 a.update(gameDisplay)
 
         for a in masses:
-            a.ifclicked( mouse, click)
-            a.draw(gameDisplay)
+            a.draw(gameDisplay,  mouse, click)
 
 
         for event in pygame.event.get():
