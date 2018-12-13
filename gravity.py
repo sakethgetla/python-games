@@ -25,11 +25,12 @@ gameDisplay = pygame.display.set_mode((display_width, display_height))
 FPS = 30
 speed = 5
 masses = []
-G_constant =50
+G_constant =90
 btnSize = [50 , 20]
 startBtnPos = [display_width - btnSize[0] - 10, 10]
 resetBtnPos = [ 10, 10]
 gravityON = False
+startBtnClicked = False
 line2vel_ratio = 0.1
 
 class Mass():
@@ -96,8 +97,10 @@ class Mass():
                     self.dotPos = mouse
 
             if ( self.posCentre[0]-15 < mouse[0] < self.posCentre[0] + 15) and ( self.posCentre[1]-15 < mouse[1] < self.posCentre[1] + 15):
-                if (click[1] == 1):
-                    self.posCentre = mouse
+                if (click[2] == 1):
+                    self.posCentre[0] = mouse[0]
+                    self.posCentre[1] = mouse[1]
+                    self.dotPos = mouse
 
         if self.clicked:
             pygame.draw.circle(gameDisplay, red, self.dotPos, 4)
@@ -149,13 +152,18 @@ def connect(XY1, XY2, w ):
 
 
 def btn(gameDisplay, pos, size, color, txt, action, mouse, click):
+    global startBtnClicked
     #click = pygame.mouse.get_rel()
     #print(click)
+    click = pygame.mouse.get_pressed()
 
-    if ( pos[0] < mouse[0] < pos[0]+size[0]):
-        if ( pos[1] < mouse[1] < pos[1]+size[1]):
-            if (click[0] == 1):
+    if (click[0] == 1 and action != None ):
+        if ( pos[0] < mouse[0] < pos[0]+size[0] and not startBtnClicked):
+            if ( pos[1] < mouse[1] < pos[1]+size[1]):
+                startBtnClicked = True
                 action()
+    else :
+        startBtnClicked = False
 
     pygame.draw.rect(gameDisplay, color, [pos[0], pos[1], size[0], size[1]] )
     myfont = pygame.font.SysFont("monospace", 15)
@@ -208,11 +216,13 @@ def gameLoop():
     gameExit = False
     global gravityON
 
-    sun = Mass(gameDisplay, [320,90], 90 , yellow) 
+    sun = Mass(gameDisplay, [320,90], 150 , yellow) 
     masses.append(sun)
-    ball = Mass(gameDisplay, [420,420], 50 , green) 
+    ball = Mass(gameDisplay, [420,420], 40 , green) 
     masses.append(ball)
-    moon = Mass(gameDisplay, [90,320], 20 , lightGreen) 
+    moon = Mass(gameDisplay, [90,320], 15 , lightGreen) 
+    masses.append(moon)
+    moon = Mass(gameDisplay, [190,520], 15 , lightGreen) 
     masses.append(moon)
 
     for a in masses:
@@ -243,6 +253,10 @@ def gameLoop():
 
             for a in masses:
                 a.update(gameDisplay)
+
+        masses[0].posCentre[0] = display_width /2 
+        masses[0].posCentre[1] = display_height/2 
+        masses[0].dotPos = masses[0].posCentre.astype(int)
 
         for a in masses:
             a.draw(gameDisplay,  mouse, click)
