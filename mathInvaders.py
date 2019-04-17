@@ -34,9 +34,9 @@ startBtnClicked = False
 line2vel_ratio = 0.1
 
 class Bullet():
-    self.pos = (0,0)
-    self.vel = 5
-    self.SIZE = 10
+    pos = [0,0]
+    vel = 5
+    SIZE = 10
     
     def __init__(self, gameDisplay, pos):
         self.pos = pos
@@ -45,22 +45,23 @@ class Bullet():
 class ANS():
     # create static variable  for the speed
 
-    self.posXY = (0,0)
-    self.vel = 5
-    self.SIZE = 50
+    posXY = [0,0]
+    vel = 5
+    SIZE = 50
 
-
-    def __init__(self, gameDisplay, posXY, text):
-        self.posXY = posXY
+    def __init__(self, gameDisplay, posNum, text):
+        #self.posXY = self.SIZE * posNum
+        self.posXY[0] = 50 * posNum
+        self.posXY[1] = 50 
         self.text = text
 
     def update():
         self.pos.X += self.vel
 
-    def draw():
+    def draw(self):
         myfont = pygame.font.SysFont("monospace", 15)
         label = myfont.render(str(self.text), 1, black)
-        gameDisplay.blit(label, posXY)
+        gameDisplay.blit(label, self.posXY)
          
     # check if the ans is hit
 
@@ -154,6 +155,15 @@ def gameLoop():
     shipHeight =50
     shipWidth =50
 
+    answers =[]
+
+    for i in range(4):
+        a = ANS(gameDisplay, i, str(i))
+        answers.append(a)
+    for i in range(4):
+        print(answers[i].posXY)
+
+
     while not gameExit:
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
@@ -162,14 +172,12 @@ def gameLoop():
         gameDisplay.fill(gray)
         btn(gameDisplay, startBtnPos, btnSize, green, "start", startClicked, mouse, click) 
         btn(gameDisplay, resetBtnPos, btnSize, green, "reset", resetClicked, mouse, click) 
-        pygame.draw.rect(gameDisplay, green, [shipPos, display_height - shipHeight], [shipWidth, shipHeight])
+        pygame.draw.rect(gameDisplay, green, [shipPos, display_height - shipHeight, shipWidth, shipHeight])
+        #pygame.draw.rect(gameDisplay, color, [pos[0], pos[1], size[0], size[1]] )
 
 
-
-
-        for a in masses:
-            a.draw(gameDisplay,  mouse, click)
-
+        for i in range(4):
+            answers[i].draw()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
