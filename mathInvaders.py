@@ -1,6 +1,8 @@
 import pygame
 import math
 import numpy as np
+from random import *
+
 
 pygame.init()
 
@@ -32,38 +34,55 @@ resetBtnPos = [ 10, 10]
 gravityON = False
 startBtnClicked = False
 line2vel_ratio = 0.1
+answers =[]
+Bullets =[]
 
 class Bullet():
-    pos = [0,0]
     vel = 5
     SIZE = 10
     
     def __init__(self, gameDisplay, pos):
         self.pos = pos
-        
+        self.visible = True
+    def update(self):
+        if (self.visible):
+            self.pos[1] -= Bullet.vel
+    def draw(self):
+        if (self.visible):
+            pygame.draw.circle(gameDisplay, black,self.pos, Bullet.SIZE) 
 
 class ANS():
     # create static variable  for the speed
-
-    posXY = [0,0]
+    #posXY = np.float64([0,0])
+    #posXY = np.zeros((2))
     vel = 5
     SIZE = 50
+    #self.posXY = np.array([0,0])
+    posXY = np.array([0,0])
 
-    def __init__(self, gameDisplay, posNum, text):
+    def __init__(self, gameDisplay, posNum, text, row):
         #self.posXY = self.SIZE * posNum
-        self.posXY[0] = 50 * posNum
-        self.posXY[1] = 50 
+        #self.posXY = np.array([0,0])
+        x = display_width//4
+        self.posXY = [ANS.SIZE + (x* posNum), ANS.SIZE+(2*ANS.SIZE*row)]
+        print("self.posXY")
+        print(self.posXY)
         self.text = text
+        self.visible = True
 
-    def update():
-        self.pos.X += self.vel
+    def update(self):
+        if (self.visible):
+            if ((self.posXY[0] <= 0 and ANS.vel <0) or (self.posXY[0] >= display_width and ANS.vel >0)):
+                ANS.vel *= -1
+            self.posXY[0] += ANS.vel
 
     def draw(self):
-        myfont = pygame.font.SysFont("monospace", 15)
-        label = myfont.render(str(self.text), 1, black)
-        gameDisplay.blit(label, self.posXY)
-         
-    # check if the ans is hit
+        if (self.visible):
+            pygame.draw.circle(gameDisplay, black,self.posXY, ANS.SIZE) 
+            myfont = pygame.font.SysFont("monospace", 30)
+            label = myfont.render(str(self.text), 1, white)
+            gameDisplay.blit(label, self.posXY)
+        # check if the ans is hit
 
 
 def connect(XY1, XY2, w ):
@@ -105,6 +124,33 @@ def connect(XY1, XY2, w ):
 #    print("obj2.accel")
 #    print(obj2.accel)
 #
+
+def question(gameDisplay):
+    size = 30
+    rr =random()
+    print(rr)
+    rand = int(rr*3)
+    print(rand)
+    print("Adw")
+    r1 = int(random()*10)
+    r2 = int(random()*10)
+    if ( rand == 0):
+        ques = str(r1 + " + " + r2)
+        ans = r1+r2
+    elif (rand ==1):
+        ques = str(r1) + " - " + str(r2)
+        ans = r1-r2
+    elif (rand ==2):
+        ques = str(r1 + " x " + r2)
+        ans = r1*r2
+    myfont = pygame.font.SysFont("monospace", size)
+    label = myfont.render(ques, 1, white)
+    gameDisplay.blit(label, [display_width/2 , 0])
+
+    return r1 r2 ans
+
+print(question(gameDisplay))
+print("^ANS")
 
 
 def btn(gameDisplay, pos, size,  color, txt, action, mouse, click):
@@ -151,17 +197,20 @@ def gameLoop():
     click = pygame.mouse.get_pressed()
     gameDisplay.fill(gray)
     gameExit = False
-    shipPos = 0
+    shipPos = 1
     shipHeight =50
     shipWidth =50
-
-    answers =[]
+    shipVel =25
 
     for i in range(4):
-        a = ANS(gameDisplay, i, str(i))
+        a = ANS(gameDisplay, i, str(i),1)
         answers.append(a)
     for i in range(4):
-        print(answers[i].posXY)
+        a = ANS(gameDisplay, i, str(i),3)
+        answers.append(a)
+    #for i in range(4):
+        #print(answers[i].posXY)
+        #print(answers[i].text)
 
 
     while not gameExit:
@@ -175,9 +224,16 @@ def gameLoop():
         pygame.draw.rect(gameDisplay, green, [shipPos, display_height - shipHeight, shipWidth, shipHeight])
         #pygame.draw.rect(gameDisplay, color, [pos[0], pos[1], size[0], size[1]] )
 
+        for i in Bullets:
+            i.update()
+            i.draw()
+            if ( i.pos[1] < 0 or not i.visible ):
+                Bullets.remove(i)
+        #print(len(Bullets))
 
-        for i in range(4):
-            answers[i].draw()
+        for i in answers:
+            i.update()
+            i.draw()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -185,11 +241,17 @@ def gameLoop():
 
         clock.tick(FPS)
         key = pygame.key.get_pressed()
-        if key[pygame.K_d] :
-            masses[0].posCentre[0] += 1
-        if key[pygame.K_q] :
-            gameExit = True
+        if ( shipPos > 0 ):
+            if key[pygame.K_LEFT] :
+                #moveLeft()
+                shipPos -= shipVel
+        if (shipPos < display_width-shipWidth):
+            if key[pygame.K_RIGHT] :
+                #moveRight()
+                shipPos += shipVel
 
+        if key[pygame.K_SPACE] :
+            Bullets.append(Bullet(gameDisplay, [shipPos +(shipWidth//2), display_height - shipHeight]))
      
         #gameDisplay.blit(label, [0,0] )
     pygame.quit()
