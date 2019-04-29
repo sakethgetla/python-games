@@ -134,20 +134,26 @@ def question(gameDisplay):
     print("Adw")
     r1 = int(random()*10)
     r2 = int(random()*10)
+    print("r1")
+    print(r1)
+    print("r2")
+    print(r2)
     if ( rand == 0):
-        ques = str(r1 + " + " + r2)
+        ques = str(r1) + ' + ' + str(r2)
         ans = r1+r2
     elif (rand ==1):
-        ques = str(r1) + " - " + str(r2)
+        ques = str(r1) + ' - ' + str(r2)
         ans = r1-r2
     elif (rand ==2):
-        ques = str(r1 + " x " + r2)
+        ques = str(r1) + ' x ' + str(r2)
         ans = r1*r2
-    myfont = pygame.font.SysFont("monospace", size)
-    label = myfont.render(ques, 1, white)
-    gameDisplay.blit(label, [display_width/2 , 0])
+    #myfont = pygame.font.SysFont("monospace", size)
+    #label = myfont.render(ques, 1, white)
+    #gameDisplay.blit(label, [display_width/2 , 20])
 
-    return r1 r2 ans
+    # if i wanna make the answers smart and not just one or two off i need to return the exact values
+    #return r1, rand, r2, ans
+    return ques, ans
 
 print(question(gameDisplay))
 print("^ANS")
@@ -172,7 +178,8 @@ def btn(gameDisplay, pos, size,  color, txt, action, mouse, click):
     label = myfont.render(str(txt), 1, black)
     gameDisplay.blit(label, pos)
     
-
+def dist2D(x, y):
+    return sqrt( ((x[1]-y[1])*(x[1]-y[1])) + ((x[0]-y[0])*(x[0]-y[0])) )
 
 
 def resetClicked():
@@ -226,6 +233,9 @@ def gameLoop():
 
         for i in Bullets:
             i.update()
+            for ans in answers:
+                if (ans.visible):
+                    if(
             i.draw()
             if ( i.pos[1] < 0 or not i.visible ):
                 Bullets.remove(i)
