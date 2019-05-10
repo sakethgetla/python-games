@@ -95,6 +95,11 @@ def connect(XY1, XY2, w ):
     else: 
         pygame.draw.line(gameDisplay, red, XY2, XY1, int(round(w*2)) )
 
+def ansVisible(answers):
+    for ans in answers:
+        if(ans.visible):
+            return True
+    return False
     
 
 
@@ -273,8 +278,8 @@ def gameLoop():
 
         pygame.display.update()
         gameDisplay.fill(gray)
-        btn(gameDisplay, startBtnPos, btnSize, green, "start", startClicked, mouse, click) 
-        btn(gameDisplay, resetBtnPos, btnSize, green, "reset", resetClicked, mouse, click) 
+        #btn(gameDisplay, startBtnPos, btnSize, green, "start", startClicked, mouse, click) 
+        #btn(gameDisplay, resetBtnPos, btnSize, green, "reset", resetClicked, mouse, click) 
         pygame.draw.rect(gameDisplay, green, [shipPos, display_height - shipHeight, shipWidth, shipHeight])
         #pygame.draw.rect(gameDisplay, color, [pos[0], pos[1], size[0], size[1]] )
         removeBullet = False
@@ -291,7 +296,11 @@ def gameLoop():
                     removeBullet = True
                     if (correctAns == ans.text):
                         ans.visible = False
-                        question, correctAns = newQuestion(gameDisplay, answers)
+                        if (ansVisible(answers)):
+                            question, correctAns = newQuestion(gameDisplay, answers)
+                        #else :
+                        #    # all ans not visible
+                        #    gameExit = True
             b.draw()
             if ( b.pos[1] < 0 or not b.visible ):
                 removeBullet = True
@@ -305,6 +314,7 @@ def gameLoop():
             if (i.visible):
                 if ((i.posXY[0] <= 0 and ANS.vel <0) or (i.posXY[0] >= display_width and ANS.vel >0)):
                     changeVel = True
+
             i.update()
             i.draw()
         if (changeVel):
@@ -330,9 +340,7 @@ def gameLoop():
             Bullets.append(Bullet(gameDisplay, [shipPos +(shipWidth//2), display_height - shipHeight]))
      
         #gameDisplay.blit(label, [0,0] )
-        if (len(answers) == 0):
-            gameExit = True
-            pygame.quit()
+
     pygame.quit()
     quit()
 
