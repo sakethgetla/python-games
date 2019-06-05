@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 #from PIL import Image
 import cv2
 import numpy as np
+from PIL import Image
 
 def toGrayscale(img):
     print(img)  
@@ -43,7 +44,7 @@ def smoothen(img):
         for j in range(width-2):
             print(i)
             print(j)
-            b[i+1][j+1] = avgAroundPix(img, i, j)
+            b[i+1][j+1] = normalize(avgAroundPix(img, i, j), 255)
     #plt.imshow(b, cmap='gray', vmin=0, vmax=255)
     #plt.show()
     return b
@@ -52,6 +53,8 @@ def avgAroundPix(a, x, y):
     return (a[x][y] + a[x+1][y] + a[x+2][y] + a[x][y+1] + a[x+1][y+1] + a[x+2][y+1] + a[x][y+2] + a[x+1][y+2] + a[x+2][y+2])/9
     #return (a[x][y] + a[x-1][y] + a[x-1][y+1] + a[x][y+1] + a[x+1][y+1] + a[x-1][y] + a[x+1][y-1] + a[x][y-1] + a[x-1][y-1])/9
 
+def normalize(num, tot):
+    return num/tot
 
     
 
@@ -62,10 +65,17 @@ img_file = 'butterfly.jpg'
 img = cv2.imread(img_file, cv2.IMREAD_COLOR)    
 
 a = toGrayscale(img)
-plt.imshow(a, cmap='gray', vmin=0, vmax=255)
+grayScaleImg = Image.fromarray(a, 'L')
+grayScaleImg.save('grayScaleImg.png')
+grayScaleImg.show()
+#plt.imshow(a, cmap='gray', vmin=0, vmax=255)
 #plt.show()
 
-plt.imshow(smoothen(a), cmap='gray', vmin=0, vmax=255)
+smoothend_image = Image.fromarray(smoothen(a), 'L')
+smoothend_image.save('smoothend_image.png')
+#smoothend_image.show()
+
+plt.imshow(smoothen(a), cmap='gray', vmin=0, vmax=1)
 plt.show()
 
 #img_file = 'eye.jpg'
