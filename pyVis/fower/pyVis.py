@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 #from PIL import Image
 import cv2
+import math
 import numpy as np
 from PIL import Image
 
@@ -38,12 +39,18 @@ def toGrayscale(img):
         for j in range(width):
             #print(i)
             #print(j)
-            a[i][j] = (img[i][j][0] + img[i][j][1] + img[i][j][2])/3
+            a[i][j] = pythag(normalize(img[i][j][0], 255), normalize(img[i][j][1], 255), normalize(img[i][j][2], 255))/3
+            #a[i][j] = normalize(pythag(img[i][j][0], img[i][j][1], img[i][j][2])/3, 255)
+            #a[i][j] = normalize((img[i][j][0] + img[i][j][1] + img[i][j][2])/3, 255)
 
     return a
 
 
 
+
+
+def pythag(a, b, c):
+    return math.sqrt(a**2 + b**2 + c**2)
 
     #plt.imshow(a)
     #plt.imshow(a, cmap='gray', vmin=0, vmax=255)
@@ -103,7 +110,7 @@ def smoothen(img):
         for j in range(width-2):
             #print(i)
             #print(j)
-            b[i+1][j+1] = normalize(avgAroundPix(img, i, j), 255)
+            b[i+1][j+1] = avgAroundPix(img, i, j)
     #plt.imshow(b, cmap='gray', vmin=0, vmax=255)
     #plt.show()
     return b
@@ -120,30 +127,50 @@ def normalize(num, tot):
 
 
 
-img_file = 'flower.jpeg'
+img_file = 'flower.jpg'
 img = cv2.imread(img_file, cv2.IMREAD_COLOR)    
 
 a = toGrayscale(img)
-grayScaleImg = Image.fromarray(a, 'L')
-grayScaleImg.save('grayScaleImg.png')
-grayScaleImg.show()
-plt.imshow(a, cmap='gray', vmin=0, vmax=255)
+#grayScaleImg = Image.fromarray(a, 'L')
+#grayScaleImg.save('grayScaleImg.png')
+#grayScaleImg.show()
+plt.imshow(a, cmap='gray', vmin=0, vmax=1)
 #plt.show()
 plt.savefig('grayScale.png')
 
-#smoothend_image = Image.fromarray(smoothen(a), 'L')
-#smoothend_image = Image.fromarray(smoothen(a), 'L')
-#smoothend_image.save('smoothend_image.png')
-#smoothend_image.show()
 
 smoothenedImg = smoothen(a)
 plt.imshow(smoothenedImg, cmap='gray', vmin=0, vmax=1)
 plt.savefig('smoothenedImg.png')
 
 doubleSmoothenedImg = smoothen(smoothenedImg)
-plt.imshow(smoothenedImg, cmap='gray', vmin=0, vmax=1)
+plt.imshow(doubleSmoothenedImg, cmap='gray', vmin=0, vmax=1)
 plt.savefig('doubleSmoothenedImg.png')
 
+smoothenFive = doubleSmoothenedImg
+for i in range(5):
+    smoothenFive = smoothen(smoothenFive)
+
+plt.imshow(smoothenFive, cmap='gray', vmin=0, vmax=1)
+plt.savefig('smoothenFive.png')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#smoothend_image = Image.fromarray(smoothen(a), 'L')
+#smoothend_image = Image.fromarray(smoothen(a), 'L')
+#smoothend_image.save('smoothend_image.png')
+#smoothend_image.show()
 
 #filteredImage = filtering(a, Hline)
 #plt.imshow( filteredImage, cmap='gray', vmin=0, vmax=255)
