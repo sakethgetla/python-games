@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 
 cap = cv2.VideoCapture(0)
+# 1 = nothing where as 2 showes the back camera ?
 
 while(True):
     # Capture frame-by-frame
