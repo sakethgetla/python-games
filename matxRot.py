@@ -19,6 +19,7 @@ display_height = 900
 width = 10
 height = width
 pos_xy = [10, 10]
+points = []
 clock = pygame.time.Clock()
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 FPS = 30
@@ -31,19 +32,40 @@ def matxmul(pos, rot):
     matx = [[1, -1],[1, 1]]
     np.multiply([x, y], matx)
 
-def rotate(pos, screenCentre, rot):
-    pos[0] = (pos[0]/math.sqrt(((pos[0])*(pos[0])) + ((pos[1])*(pos[1])))
+
+#def rotate(pos, screenCentre, rot):
+    #pos[0] = (pos[0]/math.sqrt(((pos[0])*(pos[0])) + ((pos[1])*(pos[1])))
     #pos[0] = math.sin(math.pi * rot[0]) + math.cos(math.pi * rot[0])
     #pos[1] = -math.cos(math.pi * rot[0]) + math.sin(math.pi * rot[0])
     #pos[0] = math.sin(math.pi * rot)
-    rot = [0, 0, 0]
+    #rot = [0, 0, 0]
 
-def display2Screen(gameDisplay):
+#def display2Screen(gameDisplay):
+
+def to2D(d3):
+    # takes in a 3d point and returns a 2d point
+
+
+def displayPoints(points):
+    for p in points :
+        x, y = to2D(p)
+        pygame.draw.circle(gameDisplay, red, [x, y, 5] )
+        pygame.draw.rect(gameDisplay, red, [pos[0], pos[1], size[0], size[1]] )
 
 
 def gameLoop():
+    matx = np.random.randint(10, size =(3))
+    print('matx = ')
+    #print("matx = %" %(matx))
+    print(matx)
     gameDisplay.fill(gray)
     gameExit = False
+
+    for i in range(10):
+        points.append(np.random.randint(200, size = (3))
+
+    print("points")
+    print(points)
 
     pos = [50, 50, 50]
     size = [150, 150, 150]
