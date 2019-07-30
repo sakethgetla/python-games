@@ -121,8 +121,8 @@ def gameLoop():
         key = pygame.key.get_pressed()
         for p in points:
             #
-            rotDir = np.random.randint(-1,1,  size = (3))
-            rotate(p, size, rotDir)
+            #rotDir = np.random.randint(-1,1,  size = (3))
+            #rotate(p, size, rotDir)
             #rotate(p, size, [0, -1, 0])
             #
             if (key[pygame.K_UP] or key[pygame.K_w]) :
