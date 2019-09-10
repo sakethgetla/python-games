@@ -65,8 +65,8 @@ class ANS():
         #self.posXY = self.SIZE * posNum
         #self.posXY = np.array([0,0])
         self.posXY = [ANS.SIZE +startPos+ (ANS.distBetweenAns* posNum), ANS.SIZE+(2*ANS.SIZE*row)]
-        print("self.posXY")
-        print(self.posXY)
+        #print("self.posXY")
+        #print(self.posXY)
         self.text = text
         self.visible = True
 
@@ -339,6 +339,8 @@ def gameLoop():
         if key[pygame.K_SPACE] :
             Bullets.append(Bullet(gameDisplay, [shipPos +(shipWidth//2), display_height - shipHeight]))
      
+        if key[pygame.K_q] :
+            gameExit = True
         #gameDisplay.blit(label, [0,0] )
 
     pygame.quit()
