@@ -24,6 +24,7 @@ clock = pygame.time.Clock()
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 FPS = 30
 
+
 class Point():
     touchedColor = black
     def __init__(self, gameDisplay, pos, size, color):
@@ -62,6 +63,27 @@ def gameLoop():
             x += pointSize
         x = pointSize//2
         y += pointSize
+
+    graph = np.zeros((len(nodes), len(nodes)))
+    print(len(nodes))
+    print(graph)
+
+    gridWidth = display_width // pointSize
+    gridHeight = dislaly_Height // pointSize
+
+    for i in range(len(nodes)):
+        if (i != 1):
+            graph[i][i-1 - display_width] = 1      
+            graph[i][i - display_width] = 1      
+            graph[i][i+1 - display_width] = 1      
+        if (y != 1):
+
+        graph[i][i-1 + display_width] = 1      
+        graph[i][i + display_width] = 1      
+        graph[i][i+1 + display_width] = 1      
+
+        graph[i][i-1] = 1      
+        graph[i][i+1] = 1      
 
     while not gameExit:
         mouse = pygame.mouse.get_pos()

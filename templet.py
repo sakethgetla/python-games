@@ -24,18 +24,6 @@ clock = pygame.time.Clock()
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 FPS = 30
 
-class Point():
-    touchedColor = black
-    def __init__(self, gameDisplay, pos, size, color):
-        self.pos = pos
-        self.size = size
-        self.color = color
-    
-    def changeColor(self, newColor):
-        self.color = newColor
-
-    def draw(self, gameDisplay):
-        pygame.draw.circle(gameDisplay, self.color, self.pos, self.size)
 
 def draw():
     pass
@@ -47,23 +35,10 @@ def gameLoop():
     gameExit = False
     global gravityON
     nodes = []
-    y = 0
-    x = 0
-    while (y < display_height):
-        print("y , display_height")
-        print(y, display_height)
-        while (x < display_width):
-            print("point")
-            print(y , x)
-            nodes.append(Point(gameDisplay, (x,y) , pointSize, blue))
-            x += pointSize
-        y += pointSize
 
     while not gameExit:
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
-        for node in nodes:
-            node.draw(gameDisplay)
         
 
         pygame.display.update()
