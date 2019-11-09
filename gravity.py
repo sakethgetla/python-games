@@ -152,6 +152,8 @@ def connect(XY1, XY2, w ):
 
 
 def btn(gameDisplay, pos, size, color, txt, action, mouse, click):
+    # you can pass a pointer to a fuction as an argument while calling a fuction 
+    # action is a fuction 
     global startBtnClicked
     #click = pygame.mouse.get_rel()
     #print(click)
@@ -161,6 +163,7 @@ def btn(gameDisplay, pos, size, color, txt, action, mouse, click):
         if ( pos[0] < mouse[0] < pos[0]+size[0] and not startBtnClicked):
             if ( pos[1] < mouse[1] < pos[1]+size[1]):
                 startBtnClicked = True
+                #calling the function that action is pointing to
                 action()
     else :
         startBtnClicked = False
