@@ -1,6 +1,7 @@
 import pygame
 import math
 import numpy as np
+import queue as Q
 
 pygame.init()
 gray = (115, 115, 115)
@@ -29,6 +30,9 @@ FPS = 30
 findpath = False
 btnWidth = 50
 btnHeight = btnWidth//2
+edgeWeight =1
+
+
 
 
 class Point():
@@ -44,8 +48,9 @@ class Point():
     def draw(self, gameDisplay):
         pygame.draw.circle(gameDisplay, self.color, self.pos, self.size)
 
-def draw():
-    pass
+#def drawpath(gameDisplay, path, color):
+#    pygame.draw.line
+
 
 def btn(gameDisplay, pos, size, color, txt, action, mouse, click):
     # you can pass a pointer to a fuction as an argument while calling a fuction 
@@ -70,11 +75,12 @@ def btn(gameDisplay, pos, size, color, txt, action, mouse, click):
     gameDisplay.blit(label, pos)
 
 
+#def startClicked(nodes, walls):
 def startClicked():
     global findpath
     findpath = True
 
-def dist(p1, p2):
+def dist2d(p1, p2):
     return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
 
 def is_insideGrid(x, y):
@@ -84,7 +90,7 @@ def is_insideGrid(x, y):
         return False
 
 def node2gridPos(num):
-    return ((num%gridWidth)*pointSize, (num//gridWidth)*pointSize)
+    return (((num%gridWidth)*pointSize) + (pointSize//2), ((num//gridWidth)*pointSize)+(pointSize//2))
 
 def gameLoop():
     mouse = pygame.mouse.get_pos()
@@ -132,24 +138,68 @@ def gameLoop():
     print(graph[gridWidth])
     counter = 0
 
-    visited = np.empty((len(graph)))
-    path = np.empty((len(graph)))
-    print(type(visited))
-    print(len(visited))
+    path = np.full((len(graph)), -1)
+    path[0] = 0
+    dist = np.full((len(graph)), len(graph))
+    walls = np.full((len(graph)), len(graph))
+    print("path", path)
+    print(type(path))
+    print(len(path))
+    startNode = 0
+    endNode = len(graph)-1
     
-    gameExit = True
+    pQueue = Q.PriorityQueue(len(graph))
+    startpos = node2gridPos(startNode)
+    endpos = node2gridPos(endNode)
+    pQueue.put((dist2d(startpos, endpos), startNode))
+
+    #gameExit = True
+    nodes[startNode].changeColor(green)                
+    nodes[endNode].changeColor(red)                
     while not gameExit:
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
 
-        for node in nodes:
-            if (click[0] == 1 and dist(node.pos, mouse) < pointSize//2):
-                node.changeColor(black)
+        global findpath
+        for index in range(len(nodes)):
+            if (not findpath and click[0] == 1 and dist2d(nodes[index].pos, mouse) < pointSize//2):
+                nodes[index].changeColor(black)
+                walls[index] = 1
+            if (path[index] != -1 and index != startNode and index != endNode):
+                #visited
+                nodes[index].changeColor(yellow)                
             #else :
             #    node.changeColor(blue)
-            node.draw(gameDisplay)
+            nodes[index].draw(gameDisplay)
 
-
+        if(findpath):
+            if(not pQueue.empty() and path[endNode] == -1):
+                #print("clicked")
+                p, nodeNum = pQueue.get()
+                print("node num", nodeNum)
+                #for index in range(len(graph[nodeNum])):
+                for connect in graph[nodeNum]:
+                    #connect = graph[nodeNum][index]
+                    if(dist[connect] < dist[nodeNum] + edgeWeight and path[connect] == -1 and walls[connect] != 1):
+                        assert connect != 0
+                        path[connect] = nodeNum
+                        dist[connect] = dist[nodeNum] + edgeWeight
+                        nodePos = node2gridPos(connect)
+                        nodeNumPos = node2gridPos(nodeNum)
+                        pQueue.put((dist2d(nodePos, endpos) + dist2d(nodePos, nodeNumPos), connect))
+            else:
+                #gameExit = True
+                print("path found")
+                print("path", path)
+                node = endNode
+                pathPoints = [node2gridPos(node)]
+                while(path[node] != 0):
+                    node = path[node]
+                    pathPoints.append(node2gridPos(node))
+                pathPoints.append(node2gridPos(startNode))
+                pygame.draw.lines(gameDisplay,red, False, pathPoints, 5)
+        
+        #for (node, prev) in (nodes, path):
         #if (counter < len(nodes)):
         #    nodes[counter].changeColor(black)
         #    nodes[counter].draw(gameDisplay)
@@ -157,13 +207,8 @@ def gameLoop():
         #        nodes[i].changeColor(green)
         #        nodes[i].draw(gameDisplay)
         #counter += 1
-        btn(gameDisplay, (display_width-btnWidth -5, btnHeight), (btnWidth, btnHeight), yellow, "start", startClicked, mouse, click)
-
-        global findpath
-        if(findpath):
-            print("clicked")
-             
-
+        if (not findpath):
+            btn(gameDisplay, (display_width-btnWidth -5, btnHeight), (btnWidth, btnHeight), yellow, "start", startClicked, mouse, click)
         pygame.display.update()
         gameDisplay.fill(gray)
         for event in pygame.event.get():
