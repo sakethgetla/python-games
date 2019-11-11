@@ -1,3 +1,5 @@
+# by saketh getla
+# change startNode and endNode to change starting and ending position
 import pygame
 import math
 import numpy as np
