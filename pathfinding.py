@@ -138,15 +138,15 @@ def gameLoop():
     print(graph[gridWidth])
     counter = 0
 
+    endNode = 0
+    startNode = len(graph)-1
     path = np.full((len(graph)), -1)
-    path[0] = 0
+    path[startNode] = startNode
     dist = np.full((len(graph)), len(graph))
     walls = np.full((len(graph)), len(graph))
     print("path", path)
     print(type(path))
     print(len(path))
-    startNode = 0
-    endNode = len(graph)-1
     
     pQueue = Q.PriorityQueue(len(graph))
     startpos = node2gridPos(startNode)
@@ -181,19 +181,23 @@ def gameLoop():
                 for connect in graph[nodeNum]:
                     #connect = graph[nodeNum][index]
                     if(dist[connect] < dist[nodeNum] + edgeWeight and path[connect] == -1 and walls[connect] != 1):
-                        assert connect != 0
+                        assert connect != startNode
                         path[connect] = nodeNum
                         dist[connect] = dist[nodeNum] + edgeWeight
                         nodePos = node2gridPos(connect)
                         nodeNumPos = node2gridPos(nodeNum)
                         pQueue.put((dist2d(nodePos, endpos) + dist2d(nodePos, nodeNumPos), connect))
+                        #pQueue.put((dist2d(nodePos, endpos), connect))
+            elif (path[endNode] == -1):
+                assert 0 == 1
+
             else:
                 #gameExit = True
                 print("path found")
                 print("path", path)
                 node = endNode
                 pathPoints = [node2gridPos(node)]
-                while(path[node] != 0):
+                while(path[node] != startNode):
                     node = path[node]
                     pathPoints.append(node2gridPos(node))
                 pathPoints.append(node2gridPos(startNode))
