@@ -20,7 +20,7 @@ white = (255, 255, 255)
 display_width = 1300
 display_height = 900
 
-pointSize = 30
+pointSize = 20
 
 gridWidth = display_width // pointSize
 gridHeight = display_height // pointSize
