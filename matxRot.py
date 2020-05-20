@@ -25,7 +25,7 @@ gameDisplay = pygame.display.set_mode((display_width, display_height))
 FPS = 30
 
 # focus point behind the camera
-zc = 350
+zc = 550
 
 
 
@@ -36,8 +36,13 @@ def matxmul(pos, rot):
     np.multiply([x, y], matx)
 
 
-def rotate(pos, screenCentre, rot):
-    print("rotating")
+def rotate2D(pos, rot):
+    thetha = rot[0]*2*math.pi /100
+
+
+#def rotate(pos, screenCentre, rot):
+def rotate(pos, rot):
+    #print("rotating")
     thetha = rot[0]*2*math.pi /100
     pos[0] = (pos[0]*math.cos(thetha)) - (pos[1]*math.sin(thetha))
     pos[1] = (pos[0]*math.sin(thetha)) + (pos[1]*math.cos(thetha))
@@ -84,9 +89,14 @@ def displayPoints(points):
             #x = int(math.roof(x))
             #y = int(math.roof(y))
             #pygame.draw.circle(gameDisplay, red, [x, y, 5] )
-            print("point")
-            print(x, y)
-            pygame.draw.circle(gameDisplay, green, [x, y], 5)
+            #print("point")
+            #print(x, y)
+            dist = math.sqrt((p[0]**2) + (p[1]**2) + (p[2]**2))
+            Psize = (display_width - dist) // 90
+            if (Psize <1) :
+                Psize =1
+            Psize = int(Psize)
+            pygame.draw.circle(gameDisplay, green, [x, y], Psize)
             #pygame.draw.rect(gameDisplay, red, [pos[0], pos[1], size[0], size[1]] )
 
 
@@ -98,12 +108,18 @@ def gameLoop():
     gameDisplay.fill(gray)
     gameExit = False
 
-    for i in range(100):
-        points.append(np.random.randint(-display_width//2, display_width//2, size = (3)))
-        points[i][2] = math.fabs(points[i][2])
+    points = (display_width * np.random.random_sample((100, 3)))
+
+    for p in points:
+        p[0] -= display_width//2
+        p[1] -= display_width//2
+    #    points.append(np.random.random_sample(-display_width//2, display_width//2, size = (3)))
+    #    points[i][2] = math.fabs(points[i][2])
 
 
     print("points")
+    print(type(points[0][0]))
+    print(np.shape(points))
     print(points)
 
     pos = [50, 50, 50]
@@ -125,25 +141,40 @@ def gameLoop():
             #rotate(p, size, rotDir)
             #rotate(p, size, [0, -1, 0])
             #
+            speed = 4
+            if (key[pygame.K_m]) :
+                p[2] -= speed
+            if (key[pygame.K_n]) :
+                p[2] += speed
             if (key[pygame.K_UP] or key[pygame.K_w]) :
-                p[2] +=1
+                p[1] -= speed
             if (key[pygame.K_DOWN] or key[pygame.K_s]) :
-                p[2] -=1
+                p[1] += speed
+            if (key[pygame.K_RIGHT] or key[pygame.K_d]) :
+                p[0] += speed
+            if (key[pygame.K_LEFT] or key[pygame.K_a]) :
+                p[0] -= speed
             if (key[pygame.K_x]) :
                 if (key[pygame.K_RIGHT] or key[pygame.K_d]) :
-                    rotate(p, size, [0, 0, -1])
+                    rotate(p, [0, 0, -1])
+                    #rotate(p, size, [0, 0, -1])
                 if (key[pygame.K_LEFT] or key[pygame.K_a]) :
-                    rotate(p, size, [0, 0, 1])
+                    rotate(p, [0, 0, 1])
+                    #rotate(p, size, [0, 0, 1])
             if (key[pygame.K_y]) :
                 if (key[pygame.K_RIGHT] or key[pygame.K_d]) :
-                    rotate(p, size, [0, -1, 0])
+                    rotate(p, [0, -1, 0])
+                    #rotate(p, size, [0, -1, 0])
                 if (key[pygame.K_LEFT] or key[pygame.K_a]) :
-                    rotate(p, size, [0, 1, 0])
+                    rotate(p, [0, 1, 0])
+                    #rotate(p, size, [0, 1, 0])
             if (key[pygame.K_z]) :
                 if (key[pygame.K_RIGHT] or key[pygame.K_d]) :
-                    rotate(p, size, [-1, 0, 0])
+                    rotate(p, [-1, 0, 0])
+                    #rotate(p, size, [-1, 0, 0])
                 if (key[pygame.K_LEFT] or key[pygame.K_a]) :
-                    rotate(p, size, [1, 0, 0])
+                    rotate(p, [1, 0, 0])
+                    #rotate(p, size, [1, 0, 0])
         if key[pygame.K_q] :
             gameExit = True
 
