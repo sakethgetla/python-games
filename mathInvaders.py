@@ -40,7 +40,7 @@ Bullets =[]
 class Bullet():
     vel = 25
     SIZE = 10
-    
+
     def __init__(self, gameDisplay, pos):
         self.pos = pos
         self.visible = True
@@ -49,7 +49,7 @@ class Bullet():
             self.pos[1] -= Bullet.vel
     def draw(self):
         if (self.visible):
-            pygame.draw.circle(gameDisplay, black,self.pos, Bullet.SIZE) 
+            pygame.draw.circle(gameDisplay, black,self.pos, Bullet.SIZE)
 
 class ANS():
     # create static variable  for the speed
